@@ -37,7 +37,14 @@ export default class Anchors extends React.PureComponent {
   }
 
   render() {
-    var { categories, color, i18n, icons, customElementDisabled } = this.props,
+    var {
+        categories,
+        color,
+        i18n,
+        icons,
+        customElement,
+        customElementDisabled,
+      } = this.props,
       { selected, customSelected } = this.state
 
     return (
@@ -49,7 +56,7 @@ export default class Anchors extends React.PureComponent {
           // to provide a custom button (gif) as the last category
           const custom = 'GIF'
           const customColor = customElementDisabled ? '#DFDFDF' : '#858585'
-          if (i === categories.length - 1)
+          if (customElement && i === categories.length - 1)
             return (
               <button
                 key={id}

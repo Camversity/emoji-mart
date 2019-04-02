@@ -508,6 +508,7 @@ export default class NimblePicker extends React.PureComponent {
         skinEmoji,
         notFound,
         notFoundEmoji,
+        customElement,
         customElementDisabled,
       } = this.props,
       { skin } = this.state,
@@ -529,6 +530,7 @@ export default class NimblePicker extends React.PureComponent {
             categories={this.categories}
             onAnchorClick={this.handleAnchorClick}
             onCustomClick={this.handleCustomClick}
+            customElement={customElement}
             customElementDisabled={customElementDisabled}
             icons={this.icons}
           />
@@ -633,7 +635,7 @@ export default class NimblePicker extends React.PureComponent {
                 backgroundColor: 'white',
               }}
             >
-              {this.props.customElement}
+              {customElement}
             </div>
           ) : (
             <div />
