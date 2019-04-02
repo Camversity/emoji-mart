@@ -66,6 +66,7 @@ const PickerPropTypes = {
     }),
   ),
   customElement: PropTypes.object,
+  customElementDisabled: PropTypes.bool,
   skinEmoji: PropTypes.string,
   notFound: PropTypes.func,
   notFoundEmoji: PropTypes.string,

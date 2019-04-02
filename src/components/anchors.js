@@ -37,7 +37,7 @@ export default class Anchors extends React.PureComponent {
   }
 
   render() {
-    var { categories, color, i18n, icons } = this.props,
+    var { categories, color, i18n, icons, customElementDisabled } = this.props,
       { selected, customSelected } = this.state
 
     return (
@@ -48,6 +48,7 @@ export default class Anchors extends React.PureComponent {
 
           // to provide a custom button (gif) as the last category
           const custom = 'GIF'
+          const customColor = customElementDisabled ? '#DFDFDF' : '#858585'
           if (i === categories.length - 1)
             return (
               <button
@@ -55,11 +56,11 @@ export default class Anchors extends React.PureComponent {
                 aria-label={custom}
                 title={custom}
                 data-index={i}
-                onClick={this.handleCustomClick}
+                onClick={customElementDisabled ? null : this.handleCustomClick}
                 className={`emoji-mart-anchor ${
                   customSelected ? 'emoji-mart-anchor-selected' : ''
                 }`}
-                style={{ color: customSelected ? color : '#858585' }}
+                style={{ color: customSelected ? color : customColor }}
               >
                 <div className="emoji-mart-anchor-icon">
                   <span
@@ -115,6 +116,7 @@ Anchors.propTypes /* remove-proptypes */ = {
   onAnchorClick: PropTypes.func,
   onCustomClick: PropTypes.func,
   icons: PropTypes.object,
+  customElementDisabled: PropTypes.bool,
 }
 
 Anchors.defaultProps = {
