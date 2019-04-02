@@ -11,27 +11,73 @@ export default class Anchors extends React.PureComponent {
 
     this.state = {
       selected: defaultCategory.name,
+      customSelected: false,
     }
 
     this.handleClick = this.handleClick.bind(this)
+    this.handleCustomClick = this.handleCustomClick.bind(this)
   }
 
   handleClick(e) {
     var index = e.currentTarget.getAttribute('data-index')
     var { categories, onAnchorClick } = this.props
-
+    // deselect custom tab when clicking
+    this.setState({
+      customSelected: false,
+    })
     onAnchorClick(categories[index], index)
+  }
+
+  handleCustomClick() {
+    // select custom tab when clicking
+    this.setState({
+      customSelected: true,
+    })
+    this.props.onCustomClick()
   }
 
   render() {
     var { categories, color, i18n, icons } = this.props,
-      { selected } = this.state
+      { selected, customSelected } = this.state
 
     return (
       <nav className="emoji-mart-anchors" aria-label={i18n.categorieslabel}>
         {categories.map((category, i) => {
           var { id, name, anchor } = category,
-            isSelected = name == selected
+            isSelected = !customSelected && name == selected
+
+          // to provide a custom button (gif) as the last category
+          const custom = 'GIF'
+          if (i === categories.length - 1)
+            return (
+              <button
+                key={id}
+                aria-label={custom}
+                title={custom}
+                data-index={i}
+                onClick={this.handleCustomClick}
+                className={`emoji-mart-anchor ${
+                  customSelected ? 'emoji-mart-anchor-selected' : ''
+                }`}
+                style={{ color: customSelected ? color : '#858585' }}
+              >
+                <div className="emoji-mart-anchor-icon">
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      lineHeight: '24px',
+                    }}
+                  >
+                    {custom}
+                  </span>
+                </div>
+                <span
+                  className="emoji-mart-anchor-bar"
+                  style={{ backgroundColor: color }}
+                />
+              </button>
+            )
 
           if (anchor === false) {
             return null
@@ -67,11 +113,13 @@ export default class Anchors extends React.PureComponent {
 Anchors.propTypes /* remove-proptypes */ = {
   categories: PropTypes.array,
   onAnchorClick: PropTypes.func,
+  onCustomClick: PropTypes.func,
   icons: PropTypes.object,
 }
 
 Anchors.defaultProps = {
   categories: [],
   onAnchorClick: () => {},
+  onCustomClick: () => {},
   icons: {},
 }

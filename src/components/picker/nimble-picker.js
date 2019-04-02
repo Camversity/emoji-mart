@@ -162,6 +162,7 @@ export default class NimblePicker extends React.PureComponent {
 
     this.setAnchorsRef = this.setAnchorsRef.bind(this)
     this.handleAnchorClick = this.handleAnchorClick.bind(this)
+    this.handleCustomClick = this.handleCustomClick.bind(this)
     this.setSearchRef = this.setSearchRef.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
     this.setScrollRef = this.setScrollRef.bind(this)
@@ -362,6 +363,10 @@ export default class NimblePicker extends React.PureComponent {
   }
 
   handleAnchorClick(category, i) {
+    this.setState({
+      customSelected: false,
+    })
+
     var component = this.categoryRefs[`category-${i}`],
       { scroll, anchors } = this,
       scrollToComponent = null
@@ -388,6 +393,12 @@ export default class NimblePicker extends React.PureComponent {
     } else {
       scrollToComponent()
     }
+  }
+
+  handleCustomClick() {
+    this.setState({
+      customSelected: true,
+    })
   }
 
   handleSkinChange(skin) {
@@ -516,98 +527,116 @@ export default class NimblePicker extends React.PureComponent {
             color={color}
             categories={this.categories}
             onAnchorClick={this.handleAnchorClick}
+            onCustomClick={this.handleCustomClick}
             icons={this.icons}
           />
         </div>
+        <div style={{ position: 'relative' }}>
+          <Search
+            ref={this.setSearchRef}
+            onSearch={this.handleSearch}
+            data={this.data}
+            i18n={this.i18n}
+            emojisToShowFilter={emojisToShowFilter}
+            include={include}
+            exclude={exclude}
+            custom={this.CUSTOM_CATEGORY.emojis}
+            autoFocus={autoFocus}
+          />
 
-        <Search
-          ref={this.setSearchRef}
-          onSearch={this.handleSearch}
-          data={this.data}
-          i18n={this.i18n}
-          emojisToShowFilter={emojisToShowFilter}
-          include={include}
-          exclude={exclude}
-          custom={this.CUSTOM_CATEGORY.emojis}
-          autoFocus={autoFocus}
-        />
+          <div
+            ref={this.setScrollRef}
+            className="emoji-mart-scroll"
+            onScroll={this.handleScroll}
+          >
+            {this.getCategories().map((category, i) => {
+              return (
+                <Category
+                  ref={this.setCategoryRef.bind(this, `category-${i}`)}
+                  key={category.name}
+                  id={category.id}
+                  name={category.name}
+                  emojis={category.emojis}
+                  perLine={perLine}
+                  native={native}
+                  hasStickyPosition={this.hasStickyPosition}
+                  data={this.data}
+                  i18n={this.i18n}
+                  recent={
+                    category.id == this.RECENT_CATEGORY.id ? recent : undefined
+                  }
+                  custom={
+                    category.id == this.RECENT_CATEGORY.id
+                      ? this.CUSTOM_CATEGORY.emojis
+                      : undefined
+                  }
+                  emojiProps={{
+                    native: native,
+                    skin: skin,
+                    size: emojiSize,
+                    set: set,
+                    sheetSize: sheetSize,
+                    sheetColumns: sheetColumns,
+                    sheetRows: sheetRows,
+                    forceSize: native,
+                    tooltip: emojiTooltip,
+                    backgroundImageFn: backgroundImageFn,
+                    onOver: this.handleEmojiOver,
+                    onLeave: this.handleEmojiLeave,
+                    onClick: this.handleEmojiClick,
+                  }}
+                  notFound={notFound}
+                  notFoundEmoji={notFoundEmoji}
+                />
+              )
+            })}
+          </div>
 
-        <div
-          ref={this.setScrollRef}
-          className="emoji-mart-scroll"
-          onScroll={this.handleScroll}
-        >
-          {this.getCategories().map((category, i) => {
-            return (
-              <Category
-                ref={this.setCategoryRef.bind(this, `category-${i}`)}
-                key={category.name}
-                id={category.id}
-                name={category.name}
-                emojis={category.emojis}
-                perLine={perLine}
-                native={native}
-                hasStickyPosition={this.hasStickyPosition}
+          {(showPreview || showSkinTones) && (
+            <div className="emoji-mart-bar">
+              <Preview
+                ref={this.setPreviewRef}
                 data={this.data}
-                i18n={this.i18n}
-                recent={
-                  category.id == this.RECENT_CATEGORY.id ? recent : undefined
-                }
-                custom={
-                  category.id == this.RECENT_CATEGORY.id
-                    ? this.CUSTOM_CATEGORY.emojis
-                    : undefined
-                }
+                title={title}
+                emoji={emoji}
+                showSkinTones={showSkinTones}
+                showPreview={showPreview}
                 emojiProps={{
                   native: native,
+                  size: 38,
                   skin: skin,
-                  size: emojiSize,
                   set: set,
                   sheetSize: sheetSize,
                   sheetColumns: sheetColumns,
                   sheetRows: sheetRows,
-                  forceSize: native,
-                  tooltip: emojiTooltip,
                   backgroundImageFn: backgroundImageFn,
-                  onOver: this.handleEmojiOver,
-                  onLeave: this.handleEmojiLeave,
-                  onClick: this.handleEmojiClick,
                 }}
-                notFound={notFound}
-                notFoundEmoji={notFoundEmoji}
+                skinsProps={{
+                  skin: skin,
+                  onChange: this.handleSkinChange,
+                  skinEmoji: skinEmoji,
+                }}
+                i18n={this.i18n}
               />
-            )
-          })}
+            </div>
+          )}
+          {this.state.customSelected ? (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'white',
+              }}
+            >
+              {this.props.customElement}
+            </div>
+          ) : (
+            <div />
+          )}
         </div>
-
-        {(showPreview || showSkinTones) && (
-          <div className="emoji-mart-bar">
-            <Preview
-              ref={this.setPreviewRef}
-              data={this.data}
-              title={title}
-              emoji={emoji}
-              showSkinTones={showSkinTones}
-              showPreview={showPreview}
-              emojiProps={{
-                native: native,
-                size: 38,
-                skin: skin,
-                set: set,
-                sheetSize: sheetSize,
-                sheetColumns: sheetColumns,
-                sheetRows: sheetRows,
-                backgroundImageFn: backgroundImageFn,
-              }}
-              skinsProps={{
-                skin: skin,
-                onChange: this.handleSkinChange,
-                skinEmoji: skinEmoji,
-              }}
-              i18n={this.i18n}
-            />
-          </div>
-        )}
       </section>
     )
   }

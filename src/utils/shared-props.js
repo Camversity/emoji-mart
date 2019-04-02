@@ -65,6 +65,7 @@ const PickerPropTypes = {
       sheetRows: PropTypes.number,
     }),
   ),
+  customElement: PropTypes.object,
   skinEmoji: PropTypes.string,
   notFound: PropTypes.func,
   notFoundEmoji: PropTypes.string,
