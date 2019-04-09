@@ -100,15 +100,6 @@ export default class Search extends React.PureComponent {
         <label className="emoji-mart-sr-only" htmlFor={inputId}>
           {i18n.search}
         </label>
-        <button
-          className="emoji-mart-search-icon"
-          onClick={this.clear}
-          onKeyUp={this.handleKeyUp}
-          aria-label={i18n.clear}
-          disabled={!isSearching}
-        >
-          {icon()}
-        </button>
       </section>
     )
   }
